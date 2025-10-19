@@ -1,31 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h3>Szkice wpisów</h3>
 
-<table class="table">
-   <thead>
-     <tr>
-       <th scope="col">Data</th>
-       <th scope="col">Tytuł</th>
-       <th scope="col">Treść</th>
-       <th scope="col"></th>
-     </tr>
-   </thead>
-   <tbody>
-       {% for post in drafts %}
-     <tr>
-       <td>
-           {{ post.pub_date.strftime('%Y-%m-%d') }}
-       </td>
-       <td>
-           <a href="{{ url_for('create_or_edit_entry', entry_id=post.id) }}">
-               {{ post.title }}
-           </a>
-       </td>
-       <td>{{ post.body|truncate(100, true) }}</td>
-     </tr>
-     {% endfor %}
-   </tbody>
- </table>
-
+<table class="table table-striped">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Data</th>
+      <th scope="col">Tytuł</th>
+      <th scope="col">Treść</th>
+      <th scope="col" class="text-right">Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for post in drafts %}
+    <tr>
+      <td>{{ post.pub_date.strftime('%Y-%m-%d') }}</td>
+      <td>
+        <a href="{{ url_for('create_or_edit_entry', entry_id=post.id) }}">
+          {{ post.title }}
+        </a>
+      </td>
+      <td>{{ post.body|truncate(100, true) }}</td>
+      <td class="text-right">
+        <a href="{{ url_for('create_or_edit_entry', entry_id=post.id) }}" class="btn btn-sm btn-outline-secondary mr-2" title="Edytuj">
+          <svg class="bi bi-pencil" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9z"/>
+            <path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708z"/>
+          </svg>
+        </a>
+        <form action="{{ url_for('delete_entry', entry_id=post.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Czy na pewno chcesz usunąć ten szkic?');">
+          <button type="submit" class="btn btn-sm btn-outline-danger" title="Usuń">
+            <svg class="bi bi-trash" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M5.5 5.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5zm2.5.5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0v-6zm3 .5a.5.5 0 0 1 .5-.5v6a.5.5 0 0 1-1 0v-6a.5.5 0 0 1 .5-.5z"/>
+              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1h3a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118z"/>
+            </svg>
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

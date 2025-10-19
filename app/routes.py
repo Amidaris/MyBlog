@@ -28,6 +28,8 @@ def create_or_edit_entry(entry_id):
         entry = Entry.query.filter_by(id=entry_id).first_or_404()
     else:
         entry = None
+
+    mode = "edit" if entry else "create"
   
     form = EntryForm(obj=entry)
     errors = None
@@ -39,10 +41,11 @@ def create_or_edit_entry(entry_id):
                 db.session.add(entry)
             form.populate_obj(entry)
             db.session.commit()
+            flash("Wpis został zapisany.", "success")
         else:
             errors = form.errors
 
-    return render_template("entry_form.html", form=form, errors=errors)
+    return render_template("entry_form.html", form=form, errors=errors, mode=mode)
 
 
 @app.route("/login/", methods=['GET', 'POST'])
@@ -74,3 +77,13 @@ def logout():
 def list_drafts():
    drafts = Entry.query.filter_by(is_published=False).order_by(Entry.pub_date.desc())
    return render_template("drafts.html", drafts=drafts)
+
+
+@app.route("/delete-post/<int:entry_id>", methods=["POST"])
+@login_required
+def delete_entry(entry_id):
+    entry = Entry.query.filter_by(id=entry_id).first_or_404()
+    db.session.delete(entry)
+    db.session.commit()
+    flash("Wpis został usunięty.", "success")
+    return redirect(url_for('index'))
